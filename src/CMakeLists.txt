@@ -200,14 +200,6 @@ if (WIN32)
                 VERBATIM
             )
         endforeach ()
-
-        if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-            bambustudio_copy_dlls(BambuStudioDllsCopy "Debug" "d" output_dlls_Debug)
-        elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-            bambustudio_copy_dlls(BambuStudioDllsCopy "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
-        else()
-            bambustudio_copy_dlls(BambuStudioDllsCopy "Release" "" output_dlls_Release)
-        endif()
     else ()
         file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/resources" WIN_RESOURCES_SYMLINK)
         add_custom_command(TARGET BambuStudio POST_BUILD
@@ -217,6 +209,13 @@ if (WIN32)
         )
     endif ()
 
+    if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        bambustudio_copy_dlls(BambuStudioDllsCopy "Debug" "d" output_dlls_Debug)
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+        bambustudio_copy_dlls(BambuStudioDllsCopy "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
+    else()
+        bambustudio_copy_dlls(BambuStudioDllsCopy "Release" "" output_dlls_Release)
+    endif()
 
 else ()
     if (NOT APPLE AND NOT FLATPAK)
