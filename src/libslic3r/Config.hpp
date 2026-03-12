@@ -2257,7 +2257,11 @@ public:
 	bool								nullable		= false;
     // Default value of this option. The default value object is owned by ConfigDef, it is released in its destructor.
     Slic3r::clonable_ptr<const ConfigOption> default_value;
-    void 								set_default_value(const ConfigOption* ptr) { this->default_value = Slic3r::clonable_ptr<const ConfigOption>(ptr); }
+    void  set_default_value(const ConfigOption* ptr) {
+        this->default_value = Slic3r::clonable_ptr<const ConfigOption>(ptr);
+        if (ptr)
+            this->nullable = ptr->nullable();
+    }
     template<typename T> const T* 		get_default_value() const { return static_cast<const T*>(this->default_value.get()); }
 
     // Create an empty option to be used as a base for deserialization of DynamicConfig.
