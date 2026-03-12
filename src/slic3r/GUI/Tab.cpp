@@ -3325,11 +3325,17 @@ void TabPrintModel::on_value_change(const std::string& opt_id, const boost::any&
     auto opt_id2   = opt_id;
     int opt_index = -1;
     if (auto n = opt_key.find('#'); n != std::string::npos) {
+        auto opt_id_sv = std::string_view(opt_id);
         opt_key = opt_key.substr(0, n);
-        auto iter = m_active_page->m_opt_id_map.lower_bound(opt_key);
-        assert(iter != m_active_page->m_opt_id_map.end() && iter->second == opt_id);
-        opt_id2 = iter->first;
-        opt_index = std::atoi(opt_id2.c_str() + n + 1);
+        if (m_active_page) {
+            const auto iter = m_active_page->m_opt_id_map.lower_bound(opt_key);
+            assert(iter != m_active_page->m_opt_id_map.cend() && iter->second == opt_id);
+            if (iter != m_active_page->m_opt_id_map.cend() && iter->second == opt_id)
+                opt_id_sv = (opt_id2 = iter->first);
+            else
+                BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << ": unable to find any option matching ID '" << opt_id << "' in currently active page's option ID map.";
+        }
+        opt_index = std::atoi(opt_id_sv.substr(n+1).data());
     }
     if (!has_key(opt_key))
         return;
