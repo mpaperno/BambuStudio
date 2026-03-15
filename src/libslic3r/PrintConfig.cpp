@@ -2868,7 +2868,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Others");
     def->tooltip = L("The width within which to jitter. It's adversed to be below outer wall line width");
     def->sidetext = L("mm");
-    def->min = 0;
+    def->min = 0.001;
     def->max = 1;
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(0.3));
@@ -2878,7 +2878,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Others");
     def->tooltip = L("The average distance between the random points introduced on each line segment");
     def->sidetext = L("mm");
-    def->min = 0;
+    def->min = 0.01;
     def->max = 5;
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionFloat(0.8));
