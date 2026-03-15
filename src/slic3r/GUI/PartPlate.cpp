@@ -1778,8 +1778,8 @@ bool PartPlate::check_tpu_nozzle_has_multiple_filaments(const DynamicPrintConfig
     std::unordered_map<NozzleVolumeType, int> nozzle_fils;
     if (!used_filaments.empty()) {
         for (auto filament_idx : used_filaments) {
-            int              filament_id  = filament_idx - 1;
             std::vector<int> filament_map = get_real_filament_maps(config);
+            int              filament_id  = std::clamp(filament_idx, 1, (int)filament_map.size()) - 1;
             int              extruder_idx = filament_map[filament_id] - 1;
 
             NozzleVolumeType volume_type = (NozzleVolumeType) config.option<ConfigOptionEnumsGeneric>("nozzle_volume_type")->values.at(extruder_idx);
