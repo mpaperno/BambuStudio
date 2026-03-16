@@ -597,9 +597,10 @@ namespace Slic3r
                             { min.x(), max.y() } };
                     }*/
                 }
-                else if (&wxGetApp() && wxGetApp().app_config->get_bool("show_shells_in_preview")) { // BBS: load shell at helio_gcode
+                else if (m_config && &wxGetApp() && wxGetApp().app_config->get_bool("show_shells_in_preview")) { // BBS: load shell at helio_gcode
                     load_shells(print, initialized,true);
-                    update_shells_color_by_extruder(m_config);
+                    if (!m_shells.volumes.empty())
+                        update_shells_color_by_extruder(m_config);
                 }
                 m_print_statistics = gcode_result.print_statistics;
                 if (m_time_estimate_mode != PrintEstimatedStatistics::ETimeMode::Normal) {
