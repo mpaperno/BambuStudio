@@ -411,6 +411,7 @@ public:
     void stop_jobs();
     bool is_any_job_running() const;
     void select_view(const std::string& direction);
+    void view_zoom_to_fit() const;
     //BBS: add no_slice logic
     void set_slice_from_slice_btn(bool flag);
     void select_view_3D(const std::string& name, bool no_slice = true);

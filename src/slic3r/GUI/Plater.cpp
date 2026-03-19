@@ -16797,6 +16797,13 @@ void Plater::update_ui_from_settings() { p->update_ui_from_settings(); }
 
 void Plater::select_view(const std::string& direction) { p->select_view(direction); }
 
+void Plater::view_zoom_to_fit() const 
+{
+    if (auto *view = dynamic_cast<BaseView *>(p->current_panel))
+        if (GLCanvas3D *canvas = view->get_canvas3d())
+            canvas->zoom_to_fit();
+}
+
 void Plater::set_slice_from_slice_btn(bool flag) { p->set_slice_from_slice_btn(flag); }
 //BBS: add no_slice logic
 void Plater::select_view_3D(const std::string& name, bool no_slice) { p->select_view_3D(name, no_slice); }
