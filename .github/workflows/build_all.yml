@@ -1,29 +1,29 @@
 name: Build all
 
 on:
-  push:
-    branches:
-     - main
-    paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - 'bbl/**'
-     - 'resources/**'
-     - ".github/workflows/build_*.yml"
+  # push:
+  #   branches:
+  #    - main
+  #   paths:
+  #    - 'deps/**'
+  #    - 'src/**'
+  #    - '**/CMakeLists.txt'
+  #    - 'version.inc'
+  #    - 'bbl/**'
+  #    - 'resources/**'
+  #    - ".github/workflows/build_*.yml"
 
-  pull_request:
-    branches:
-     - master
-    paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - ".github/workflows/build_*.yml"
-     - 'BuildLinux.sh'
-     - 'build_win.bat'
+  # pull_request:
+  #   branches:
+  #    - master
+  #   paths:
+  #    - 'deps/**'
+  #    - 'src/**'
+  #    - '**/CMakeLists.txt'
+  #    - 'version.inc'
+  #    - ".github/workflows/build_*.yml"
+  #    - 'BuildLinux.sh'
+  #    - 'build_win.bat'
     
   workflow_dispatch: # manual dispatch
       inputs:
@@ -43,11 +43,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
+          # - os: ubuntu-22.04
           - os: ubuntu-24.04
-          - os: windows-latest
-          - os: macos-15-intel
-            arch: x86_64
+          # - os: windows-latest
+          # - os: macos-15-intel
+            # arch: x86_64
           - os: macos-15
             arch: arm64
     uses: ./.github/workflows/build_check_cache.yml

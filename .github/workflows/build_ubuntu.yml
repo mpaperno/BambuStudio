@@ -1,6 +1,6 @@
 name: Build Linux
 
-on: [pull_request]
+on: [workflow_dispatch] # manual dispatch
 
 jobs:
   appimage-builder:
