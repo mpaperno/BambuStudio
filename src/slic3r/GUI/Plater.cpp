@@ -13170,40 +13170,40 @@ bool Plater::priv::check_ams_status_impl(bool is_slice_all)
             is_same_as_printer = is_extruder_stat_synced();
         }
 
-        std::vector<std::map<int, int>> ams_count_info;
-        ams_count_info.resize(2);
-        int deputy_4 = 0, main_4 = 0, deputy_1 = 0, main_1 = 0;
-        for (auto ams : obj->GetFilaSystem()->GetAmsList()) {
-            // Main (first) extruder at right
-            if (ams.second->GetExtruderId() == 0) {
-                if (ams.second->GetAmsType() == DevAms::N3S) // N3S
-                    ++main_1;
-                else
-                    ++main_4;
-            } else if (ams.second->GetExtruderId() == 1) {
-                if (ams.second->GetAmsType() == DevAms::N3S) // N3S
-                    ++deputy_1;
-                else
-                    ++deputy_4;
+        if (is_same_as_printer && !preset_bundle->extruder_ams_counts.empty() && !preset_bundle->extruder_ams_counts.front().empty()) {
+            std::vector<std::map<int, int>> ams_count_info;
+            ams_count_info.resize(2);
+            int deputy_4 = 0, main_4 = 0, deputy_1 = 0, main_1 = 0;
+            for (auto ams : obj->GetFilaSystem()->GetAmsList()) {
+                // Main (first) extruder at right
+                if (ams.second->GetExtruderId() == 0) {
+                    if (ams.second->GetAmsType() == DevAms::N3S) // N3S
+                        ++main_1;
+                    else
+                        ++main_4;
+                } else if (ams.second->GetExtruderId() == 1) {
+                    if (ams.second->GetAmsType() == DevAms::N3S) // N3S
+                        ++deputy_1;
+                    else
+                        ++deputy_4;
+                }
             }
-        }
 
-        int left_4  = main_4;
-        int left_1  = main_1;
-        int right_4 = deputy_4;
-        int right_1 = deputy_1;
-        if (!obj->is_main_extruder_on_left()) {
-            left_4  = deputy_4;
-            left_1  = deputy_1;
-            right_4 = main_4;
-            right_1 = main_1;
-        }
+            int left_4  = main_4;
+            int left_1  = main_1;
+            int right_4 = deputy_4;
+            int right_1 = deputy_1;
+            if (!obj->is_main_extruder_on_left()) {
+                left_4  = deputy_4;
+                left_1  = deputy_1;
+                right_4 = main_4;
+                right_1 = main_1;
+            }
 
-        if (!preset_bundle->extruder_ams_counts.empty() && !preset_bundle->extruder_ams_counts.front().empty()) {
-            is_same_as_printer &= preset_bundle->extruder_ams_counts[0][4] == left_4
-            && preset_bundle->extruder_ams_counts[0][1] == left_1
-            && preset_bundle->extruder_ams_counts[1][4] == right_4
-            && preset_bundle->extruder_ams_counts[1][1] == right_1;
+            is_same_as_printer = preset_bundle->extruder_ams_counts[0][4] == left_4
+                && preset_bundle->extruder_ams_counts[0][1] == left_1
+                && preset_bundle->extruder_ams_counts[1][4] == right_4
+                && preset_bundle->extruder_ams_counts[1][1] == right_1;
         }
 
         if (!is_same_as_printer) {
@@ -13218,10 +13218,15 @@ bool Plater::priv::check_ams_status_impl(bool is_slice_all)
                 {
                     add_button(wxID_YES, true, _L("Sync now"));
                     add_button(wxID_NO, true, _L("Later"));
+                    if (wxGetApp().get_mode() >= ConfigOptionMode::comAdvanced)
+                        show_dsa_button(_L("Don't ask me again (this can also be changed in program settings).") + "  ");
                 }
             } dlg(q);
             dlg.Fit();
-            if (dlg.ShowModal() == wxID_YES) {
+            const auto result = dlg.ShowModal();
+            if (wxGetApp().get_mode() >= ConfigOptionMode::comAdvanced && dlg.get_checkbox_state())
+                wxGetApp().app_config->set_bool("show_sync_b4_slice_warning", false);
+            if (result == wxID_YES) {
                 if (GUI::wxGetApp().sidebar().sync_extruder_list()) {
                     if (is_slice_all)
                         wxPostEvent(q, SimpleEvent(EVT_GLTOOLBAR_SLICE_ALL));
@@ -20915,16 +20920,13 @@ void Plater::update_objects_position_when_select_preset(const std::function<void
 
 bool Plater::check_ams_status(bool is_slice_all)
 {
-    if (m_check_status == 0) {
-        if (!p->check_ams_status_impl(is_slice_all)) {
-            m_check_status = 0;
-            return false;
-        }
-        else {
-            m_check_status = 1;
-        }
-    }
+    if (m_check_status != 0 || (wxGetApp().get_mode() >= ConfigOptionMode::comAdvanced && !wxGetApp().app_config->get_bool("show_sync_b4_slice_warning")))
+        return true;
 
+    if (!p->check_ams_status_impl(is_slice_all))
+        return false;
+
+    m_check_status = 1;
     return true;
 }
 

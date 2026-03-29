@@ -476,6 +476,9 @@ void AppConfig::set_defaults()
     if (get("show_wrapping_detect_dialog").empty()) {
         set_bool("show_wrapping_detect_dialog", true);
     }
+    if (get("show_sync_b4_slice_warning").empty()) {
+        set_bool("show_sync_b4_slice_warning", true);
+    }
     if (get("ignore_module_cert").empty()) {
         set_bool("ignore_module_cert", false);
     }
