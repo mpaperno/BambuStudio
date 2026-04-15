@@ -330,16 +330,16 @@ bool GLGizmoBrimEars::gizmo_event(SLAGizmoEventType action, const Vec2d &mouse_p
         } else {
             render_hover_point.reset();
         }
-    } else if (action == SLAGizmoEventType::LeftDown && (shift_down || alt_down || control_down)) {
+    } else if (action == SLAGizmoEventType::LeftDown && shift_down) {
         // left down with shift - show the selection rectangle:
         if (m_hover_id == -1) {
-            if (shift_down || alt_down) { m_selection_rectangle.start_dragging(mouse_position, shift_down ? GLSelectionRectangle::Select : GLSelectionRectangle::Deselect); }
+            if (shift_down)
+                m_selection_rectangle.start_dragging(mouse_position, alt_down ? GLSelectionRectangle::Deselect : GLSelectionRectangle::Select); 
         } else {
             if (m_editing_cache[m_hover_id].selected)
                 unselect_point(m_hover_id);
-            else {
-                if (!alt_down) select_point(m_hover_id);
-            }
+            else if (!alt_down)
+                select_point(m_hover_id);
         }
 
         return true;
@@ -379,7 +379,7 @@ bool GLGizmoBrimEars::gizmo_event(SLAGizmoEventType action, const Vec2d &mouse_p
     }
 
     // left up with selection rectangle - select points inside the rectangle:
-    if ((action == SLAGizmoEventType::LeftUp || action == SLAGizmoEventType::ShiftUp || action == SLAGizmoEventType::AltUp) && m_selection_rectangle.is_dragging()) {
+    if ((action == SLAGizmoEventType::LeftUp || action == SLAGizmoEventType::ShiftUp) && m_selection_rectangle.is_dragging()) {
         // Is this a selection or deselection rectangle?
         GLSelectionRectangle::EState rectangle_status = m_selection_rectangle.get_state();
 
