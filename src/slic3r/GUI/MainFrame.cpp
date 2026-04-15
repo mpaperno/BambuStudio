@@ -713,6 +713,19 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
             return;
         }
 
+        // Pass 3D view preset shortcuts directly to the current canvas. (Only 0-7 currently used but reserve 8 & 9 anyway.)
+        if (evt.CmdDown() && evt.GetKeyCode() >= '0' && evt.GetKeyCode() <= '9' && m_plater) {
+            if (auto *canvas = m_plater->canvas3D()) {
+                if (auto *target = (wxWindow*)canvas->get_wxglcanvas()) {
+                    wxKeyEvent e(evt);
+                    e.SetEventType(wxEVT_KEY_UP);
+                    e.SetEventObject(target);
+                    wxPostEvent(target, e);
+                }
+            }
+            return;
+        }
+
         evt.Skip();
     });
 
